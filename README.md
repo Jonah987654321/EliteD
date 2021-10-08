@@ -1,4 +1,3 @@
-
 # EliteD
 EliteD is a package to make database usage easier!
 Create database easily and read and update them.
@@ -14,10 +13,12 @@ To install the package you just need to execute the following in your command li
 This is how you create and setup a Database
  ```py
  import EliteD #importing the package
-database = EliteD.create_database("user.db", "/path/to/db") #Creates the database "user.db" at the given path
-database.create_table("test", [{"type": int, "name": "test"}]) #Creates the table "test" in the database with the column "test" with integer as values.
-#You can give as many columns as you want
+database = EliteD.create_database("user.db", "/path/to/db")
+database.create_table("test", [{"type": int, "name": "test"}]) 
 ```
+The second line would create the database "user.db" at the given path
+The last line creates the table "test" in the database with the column "test" with integer as values. You can add as many columns as you want
+
 If you already have a database, you can open the database like this: 
 ```py
 import EliteD #import the module

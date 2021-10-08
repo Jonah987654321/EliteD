@@ -4,6 +4,3 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
-install_requires=[
-   'sqlite3'
-]
