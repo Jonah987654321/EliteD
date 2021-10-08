@@ -1,4 +1,4 @@
-import __init__ as EliteD #Importing the EliteD module
+import EliteD #Importing the EliteD module
 
 db = EliteD.Database("/home/pi/dc_bot/user.db") #Opens the exsisting table user.db at the given path
 
