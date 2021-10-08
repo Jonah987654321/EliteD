@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/EliteD/__init__.py
+src/EliteD/example.py
+src/EliteD.egg-info/PKG-INFO
+src/EliteD.egg-info/SOURCES.txt
+src/EliteD.egg-info/dependency_links.txt
+src/EliteD.egg-info/top_level.txt

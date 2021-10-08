@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: EliteD
+Version: 1.0.0
+Summary: A package to make database usage easier
+Home-page: https://github.com/Pythonwolf7734/EliteD/
+Author: Jonah Emme
+Author-email: jonah.emme@web.de
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/Pythonwolf7734/EliteD/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# EliteD
+
+EliteD is a package to make database usage easier!
+Easily create database and read and update them
+
