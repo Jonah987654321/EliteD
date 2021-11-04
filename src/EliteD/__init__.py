@@ -86,6 +86,9 @@ class Database:
             raise error
         else:
             data = cursor.fetchall()
+            if len(data) == 1:
+                for element in data:
+                    data=element
             return data
 
     def create_table(self, name: str, columns: list):
@@ -154,6 +157,31 @@ class Database:
         if str(table).isspace() or str(row).isspace() or str(new_value).isspace():
             raise EmptyValue
         execution = f"UPDATE {table} SET {row}={new_value}"
+        for condition in conditions:
+            if list(conditions).index(condition) == 0:
+                execution += f" WHERE {condition}={conditions[condition]}"
+            else:
+                execution += f"AND {condition}={conditions[condition]}"
+        try:
+            cursor.execute(execution)
+            connection.commit()
+        except Exception as error:
+            connection.rollback()
+            raise error
+
+    def delete_value(self, table: str, conditions: dict = {}):
+        """
+        Deletes all values from the given table that matches the conditions
+        --------------
+        Arguments:
+        -table: The table to delete a value
+        -conditions: The conditions which values should be deleted. Should be like this: {"name of row": "value when to edit"}
+        """
+        connection = sqlite3.connect(self.path)
+        cursor = connection.cursor()
+        if str(table).isspace():
+            raise EmptyValue
+        execution = f"DELETE FROM {table}"
         for condition in conditions:
             if list(conditions).index(condition) == 0:
                 execution += f" WHERE {condition}={conditions[condition]}"

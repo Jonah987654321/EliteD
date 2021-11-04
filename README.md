@@ -31,7 +31,7 @@ database = EliteD.Database("/path/to/db")
 database.delete_table("name of the table")
 ```
 
-### Reading and changing values of a database
+### Reading, deleting and changing values of a database
 To read a value of a database, you can use the `read_value ` method:
 ```py
 import EliteD
@@ -39,6 +39,15 @@ database = EliteD.Database("/path/to/db")
 read = database.read_value(table="test", values=["test"], conditions={"test": 0})
 ```
 `values` is the row you want to read from the table. You can give multiple values. To read out all values, you can use the `EliteD.AllValues()` class. Conditions can be specified when you only want to read out the values when a row (`test` in this case)  has the specified value (`0` in this case).
+
+To delete database values you can use the `delete_value` method:
+```py
+import EliteD
+database = EliteD.Database("/path/to/db")
+database.delete_value(table="test", row="trees", new_value=2, conditions={"floof": 1})
+```
+This would delete every value of the row `trees` from the table `test` if the value of `floof` is `1`
+
 To change database values, you can use `update_value` method:
 ```py
 import EliteD
