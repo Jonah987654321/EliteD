@@ -44,9 +44,38 @@ class Database:
             raise InvalidPath(path)
         try:
             self.connection = sqlite3.connect(path)
-            self.cursor = self.connection.cursor
+            self.cursor = self.connection.cursor()
+            self.connection.close()
         except:
             raise InvalidPath(path)
+
+    def insert_value(self, table: str, values: tuple):
+        """
+        Insert values in the given table
+        --------------
+        Arguments:
+        -table: The table to insert the values
+        -values: The values to insert
+        """
+        if table.isspace():
+            raise EmptyValue
+        connection = sqlite3.connect(self.path)
+        cursor = connection.cursor()
+        execution = f"INSERT INTO {table} VALUES ("
+        for value in values:
+            if values.index(value) != 0:
+                execution += ", "
+            execution += "?"
+        execution += ")"
+        print(execution)
+        try:
+            cursor.execute(execution, values)
+            connection.commit()
+            connection.close()
+        except Exception as e:
+            connection.close()
+            raise e
+
 
     def read_value(self, table: str, values: list, conditions: dict = {}):
         """
@@ -54,21 +83,22 @@ class Database:
         --------------
         Arguments:
         -table: The table to read the values
-        -values: The values to edit. Use EliteD.AllValues to read all values
+        -values: The values to read. Use EliteD.AllValues() to read all values
         -conditions: The conditions which values should be edited. Should be like this: {"name of row": "value when to edit"}
         """
-        connection = sqlite3.connect(self.path)
-        cursor = connection.cursor()
         if table.isspace():
             raise EmptyValue
-        execution = f"SELECT "
         if len(values) == 0:
             raise EmptyValue
+        connection = sqlite3.connect(self.path)
+        cursor = connection.cursor()
+        execution = f"SELECT "
         for value in values:
             if type(value) == AllValues:
                 execution = "SELECT *"
                 break
             elif type(value) != str:
+                connection.close()
                 raise InvalidType("values")
             if value != values[-1]:
                 execution += f"{value}, "
@@ -83,12 +113,14 @@ class Database:
         try:
             cursor.execute(execution)
         except Exception as error:
+            connection.close()
             raise error
         else:
             data = cursor.fetchall()
             if len(data) == 1:
                 for element in data:
                     data=element
+            connection.close()
             return data
 
     def create_table(self, name: str, columns: list):
@@ -101,11 +133,11 @@ class Database:
         -columns: list with all columns of the database. Should look like this [{"type": int, "name": "name"}]
         Possible types are int and str
         """
+        if len(columns) == 0:
+            raise EmptyValue
         connection = sqlite3.connect(self.path)
         cursor = connection.cursor()
         types = {int: "INT", str: "TEXT"}
-        if len(columns) == 0:
-            raise EmptyValue
         execute_statement = f"CREATE TABLE {name} ("
         for column in columns:
             try:
@@ -114,13 +146,16 @@ class Database:
                 else:
                     f"{column['name']} {column['type']}, "
             except:
+                connection.close()
                 raise InvalidType("columns")
         execute_statement += ")"
         try:
             cursor.execute(execute_statement)
             connection.commit()
+            connection.close()
         except Exception as error:
             connection.rollback()
+            connection.close()
             raise error
 
     def delete_table(self, name: str):
@@ -130,16 +165,18 @@ class Database:
         Arguments:
         -name: name of the table that should be deleted
         """
-        connection = sqlite3.connect(self.path)
-        cursor = connection.cursor()
         if name.isspace():
             raise EmptyValue
         else:
+            connection = sqlite3.connect(self.path)
+            cursor = connection.cursor()
             try:
                 cursor.execute(f"DROP TABLE {name}")
                 connection.commit()
+                connection.close()
             except Exception as error:
                 connection.rollback()
+                connection.close()
                 raise error
 
     def update_value(self, table: str, row: str, new_value: str, conditions: dict = {}):
@@ -152,10 +189,10 @@ class Database:
         -new_value: The value to set as new value
         -conditions: The conditions which values should be edited. Should be like this: {"name of row": "value when to edit"}
         """
-        connection = sqlite3.connect(self.path)
-        cursor = connection.cursor()
         if str(table).isspace() or str(row).isspace() or str(new_value).isspace():
             raise EmptyValue
+        connection = sqlite3.connect(self.path)
+        cursor = connection.cursor()
         execution = f"UPDATE {table} SET {row}={new_value}"
         for condition in conditions:
             if list(conditions).index(condition) == 0:
@@ -165,8 +202,10 @@ class Database:
         try:
             cursor.execute(execution)
             connection.commit()
+            connection.close()
         except Exception as error:
             connection.rollback()
+            connection.close()
             raise error
 
     def delete_value(self, table: str, conditions: dict = {}):
@@ -177,10 +216,10 @@ class Database:
         -table: The table to delete a value
         -conditions: The conditions which values should be deleted. Should be like this: {"name of row": "value when to edit"}
         """
-        connection = sqlite3.connect(self.path)
-        cursor = connection.cursor()
         if str(table).isspace():
             raise EmptyValue
+        connection = sqlite3.connect(self.path)
+        cursor = connection.cursor()
         execution = f"DELETE FROM {table}"
         for condition in conditions:
             if list(conditions).index(condition) == 0:
@@ -190,8 +229,10 @@ class Database:
         try:
             cursor.execute(execution)
             connection.commit()
+            connection.close()
         except Exception as error:
             connection.rollback()
+            connection.close()
             raise error
 
 
@@ -205,8 +246,11 @@ def create_database(name: str, path: str) -> Database:
     """
     try:
         connection = sqlite3.connect(f"{path}/{name}")
+        cursor = connection.cursor()
     except:
-        InvalidPath(f"{path}/{name}")
+        connection.close()
+        raise InvalidPath(f"{path}/{name}")
     else:
+        connection.close()
         return Database(f"{path}/{name}")
     
