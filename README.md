@@ -1,6 +1,6 @@
 # EliteD
 EliteD is a package to make database usage easier!
-Create database easily and read and update them.
+Create database easily and read and update them.\n
 PyPi Page: https://pypi.org/project/EliteD/
 
 ### Installing
